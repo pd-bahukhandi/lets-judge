@@ -12,17 +12,27 @@ export default function LeaderboardPage() {
   const [lastUpdated, setLastUpdated] = useState(null)
 
   const load = useCallback(async () => {
-    // Fetch all scores joined with team names, then aggregate in JS
-    const { data } = await supabase
-      .from('scores')
-      .select('team_id, total, teams(name)')
+    // Fetch teams and scores separately to ensure team names are available
+    const [{ data: teamsData }, { data: scoresData }] = await Promise.all([
+      supabase.from('teams').select('id, name'),
+      supabase.from('scores').select('team_id, total'),
+    ])
 
-    if (!data) return
+    if (!teamsData || !scoresData) return
 
+    // Build team name lookup
+    const teamNames = {}
+    for (const team of teamsData) {
+      teamNames[team.id] = team.name
+    }
+
+    // Aggregate scores by team
     const map = {}
-    for (const s of data) {
+    for (const s of scoresData) {
       const id = s.team_id
-      if (!map[id]) map[id] = { name: s.teams?.name ?? 'Unknown', totals: [] }
+      if (!map[id]) {
+        map[id] = { name: teamNames[id] ?? 'Unknown', totals: [] }
+      }
       map[id].totals.push(s.total)
     }
 

@@ -18,13 +18,14 @@ export default function DashboardPage({ publicView = false }) {
         // Public/read-only: fetch teams and aggregated scores
         const [{ data: teamsData }, { data: scoresData }] = await Promise.all([
           supabase.from('teams').select('*').order('name'),
-          supabase.from('scores').select('team_id, total, teams(name)'),
+          supabase.from('scores').select('team_id, total'),
         ])
 
+        // Aggregate scores by team
         const map = {}
         for (const s of scoresData || []) {
           const id = s.team_id
-          if (!map[id]) map[id] = { name: s.teams?.name ?? 'Unknown', totals: [] }
+          if (!map[id]) map[id] = { totals: [] }
           map[id].totals.push(s.total)
         }
 
