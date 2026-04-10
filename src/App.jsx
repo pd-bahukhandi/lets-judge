@@ -23,8 +23,6 @@ export default function App() {
           />
           {/* Public leaderboard (no login required) */}
           <Route path="/leaderboard" element={<LeaderboardPage />} />
-          {/* Public teams view (read-only) */}
-          <Route path="/teams" element={<DashboardPage publicView />} />
           <Route
             path="/admin"
             element={
