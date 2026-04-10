@@ -10,7 +10,7 @@ import './index.css'
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <BrowserRouter basename="/lets-judge">
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route
