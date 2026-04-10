@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import ScoreForm from '../components/ScoreForm'
 
-export default function DashboardPage() {
+export default function DashboardPage({ publicView = false }) {
   const { profile, logout } = useAuth()
   const [teams, setTeams] = useState([])
   const [scores, setScores] = useState({})
@@ -12,22 +12,51 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!profile) return // Wait for profile to load
     async function load() {
-      const [{ data: teamsData }, { data: scoresData }] = await Promise.all([
-        supabase.from('teams').select('*').order('name'),
-        supabase.from('scores').select('*').eq('judge_id', profile.id),
-      ])
-      setTeams(teamsData || [])
-      const byTeam = {}
-      for (const s of scoresData || []) byTeam[s.team_id] = s
-      setScores(byTeam)
-      setLoading(false)
+      setLoading(true)
+      if (publicView || !profile) {
+        // Public/read-only: fetch teams and aggregated scores
+        const [{ data: teamsData }, { data: scoresData }] = await Promise.all([
+          supabase.from('teams').select('*').order('name'),
+          supabase.from('scores').select('team_id, total, teams(name)'),
+        ])
+
+        const map = {}
+        for (const s of scoresData || []) {
+          const id = s.team_id
+          if (!map[id]) map[id] = { name: s.teams?.name ?? 'Unknown', totals: [] }
+          map[id].totals.push(s.total)
+        }
+
+        setTeams(teamsData || [])
+        const byTeam = {}
+        for (const t of teamsData || []) {
+          const m = map[t.id]
+          if (m) {
+            const avg = m.totals.reduce((a, b) => a + b, 0) / m.totals.length
+            byTeam[t.id] = { avg, judgeCount: m.totals.length }
+          }
+        }
+        setScores(byTeam)
+        setLoading(false)
+      } else {
+        // Authenticated judge: load teams and this judge's scores
+        const [{ data: teamsData }, { data: scoresData }] = await Promise.all([
+          supabase.from('teams').select('*').order('name'),
+          supabase.from('scores').select('*').eq('judge_id', profile.id),
+        ])
+        setTeams(teamsData || [])
+        const byTeam = {}
+        for (const s of scoresData || []) byTeam[s.team_id] = s
+        setScores(byTeam)
+        setLoading(false)
+      }
     }
     load()
-  }, [profile])
+  }, [profile, publicView])
 
   async function refreshScores() {
+    if (publicView || !profile) return
     const { data } = await supabase
       .from('scores')
       .select('*')
@@ -44,14 +73,23 @@ export default function DashboardPage() {
   return (
     <div className="page">
       <header className="app-header">
-        <h2>Judge Dashboard</h2>
+        <h2>{publicView ? 'Teams' : 'Judge Dashboard'}</h2>
         <div className="header-right">
-          <span className="username-badge">👤 {profile.username}</span>
-          <Link to="/leaderboard" className="nav-link">Leaderboard</Link>
-          {profile.role === 'admin' && (
-            <Link to="/admin" className="nav-link">Admin</Link>
+          {profile ? (
+            <>
+              <span className="username-badge">👤 {profile.username}</span>
+              <Link to="/leaderboard" className="nav-link">Leaderboard</Link>
+              {profile.role === 'admin' && (
+                <Link to="/admin" className="nav-link">Admin</Link>
+              )}
+              <button onClick={logout} className="btn-logout">Log Out</button>
+            </>
+          ) : (
+            <>
+              <Link to="/leaderboard" className="nav-link">Leaderboard</Link>
+              <Link to="/login" className="nav-link">Log In</Link>
+            </>
           )}
-          <button onClick={logout} className="btn-logout">Log Out</button>
         </div>
       </header>
 
@@ -71,24 +109,36 @@ export default function DashboardPage() {
           const isOpen = expanded === team.id
           return (
             <div key={team.id} className={`team-card ${scored ? 'scored' : ''} ${isOpen ? 'open' : ''}`}>
-              <button
-                className="team-header"
-                onClick={() => setExpanded(isOpen ? null : team.id)}
-              >
+              <div className="team-header">
                 <span className="team-name">{team.name}</span>
                 <span className="team-status">
-                  {scored ? `✓ ${scores[team.id].total} / 100` : 'Not scored yet'}
+                  {publicView || !profile
+                    ? scored
+                      ? `Avg ${scores[team.id].avg.toFixed(1)} · ${scores[team.id].judgeCount} judges`
+                      : 'No scores yet'
+                    : scored
+                      ? `✓ ${scores[team.id].total} / 100`
+                      : 'Not scored yet'}
                 </span>
-                <span className="expand-icon">{isOpen ? '▲' : '▼'}</span>
-              </button>
-              {isOpen && (
-                <ScoreForm
-                  team={team}
-                  existingScore={scores[team.id]}
-                  onSaved={() => {
-                    refreshScores()
-                  }}
-                />
+              </div>
+              {!publicView && (
+                <>
+                  <button
+                    className="expand-toggle"
+                    onClick={() => setExpanded(isOpen ? null : team.id)}
+                  >
+                    {isOpen ? '▲' : '▼'}
+                  </button>
+                  {isOpen && (
+                    <ScoreForm
+                      team={team}
+                      existingScore={scores[team.id]}
+                      onSaved={() => {
+                        refreshScores()
+                      }}
+                    />
+                  )}
+                </>
               )}
             </div>
           )

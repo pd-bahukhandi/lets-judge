@@ -59,7 +59,9 @@ export default function LeaderboardPage() {
       <header className="app-header">
         <h2>🏆 Leaderboard</h2>
         <div className="header-right">
-          <Link to="/dashboard" className="nav-link">Dashboard</Link>
+          <Link to={profile ? "/dashboard" : "/teams"} className="nav-link">
+            {profile ? 'Dashboard' : 'Teams'}
+          </Link>
           {profile?.role === 'admin' && (
             <Link to="/admin" className="nav-link">Admin</Link>
           )}

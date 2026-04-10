@@ -21,14 +21,10 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/leaderboard"
-            element={
-              <ProtectedRoute>
-                <LeaderboardPage />
-              </ProtectedRoute>
-            }
-          />
+          {/* Public leaderboard (no login required) */}
+          <Route path="/leaderboard" element={<LeaderboardPage />} />
+          {/* Public teams view (read-only) */}
+          <Route path="/teams" element={<DashboardPage publicView />} />
           <Route
             path="/admin"
             element={
@@ -37,8 +33,8 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-          {/* Default: redirect to dashboard (ProtectedRoute handles unauthenticated redirects) */}
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          {/* Default: public entry goes to leaderboard */}
+          <Route path="*" element={<Navigate to="/leaderboard" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
