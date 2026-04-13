@@ -59,7 +59,7 @@ export default function LeaderboardPage() {
         }))
         .sort((a, b) => b.avg - a.avg)
 
-      setRows(ranked)
+      setRows(allTeams)
     }
 
     setLastUpdated(new Date())
@@ -140,21 +140,7 @@ export default function LeaderboardPage() {
                 </td>
                 <td className="team-name-cell">{row.name}</td>
                 {!profile && <td className="status-cell">{row.members}</td>}                
-                {profile && <td className="status-cell">blah</td>}                
-                 
-                {/* <td className="score-cell"> */}
-                  {/* {profile ? (
-                    typeof row.avg === 'number' ? (
-                      <>
-                        <strong>{row.avg.toFixed(1)}</strong>
-                        <span className="score-max"> / 100</span>
-                      </>
-                    ) : (
-                      '–'
-                    )
-                  ) : null} */}
-                   
-                {/* </td> */}
+                {profile && <td>blah</td>} 
                 {profile && <td>{row.judgeCount}</td>}                
               </tr>
             ))}
