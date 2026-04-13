@@ -15,8 +15,12 @@ export default function LoginPage() {
     setError(null)
     setLoading(true)
     try {
-      await login(username.trim(), password)      
-      navigate('/leaderboard');
+      const profile = await login(username.trim(), password)
+      if (profile?.role === 'judge') {
+        navigate('/dashboard')
+      } else {
+        navigate('/leaderboard')
+      }
     } catch (err) {
       setError(err.message || 'Login failed. Check your credentials.')
     } finally {

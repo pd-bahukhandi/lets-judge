@@ -32,14 +32,21 @@ export function AuthProvider({ children }) {
       .eq('id', userId)
       .single()
     setProfile(data)
+    return data
   }
 
   async function login(username, password) {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: `${username}@judging.app`,
       password,
     })
     if (error) throw error
+    const userId = data?.session?.user?.id
+    if (userId) {
+      const profileData = await fetchProfile(userId)
+      return profileData
+    }
+    return null
   }
 
   async function logout() {
