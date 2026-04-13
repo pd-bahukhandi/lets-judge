@@ -126,15 +126,15 @@ export default function LeaderboardPage() {
           <tbody>
             {rows.map((row, i) => (
               <tr
-                key={profile ? row.name : row.id}
+                key={row.id ?? row.name}
                 className={profile && i < 3 ? `rank-${i + 1}` : ''}
               >
                 <td className="rank-cell">
                   {profile ? (MEDALS[i] ?? i + 1) : (i + 1)}
                 </td>
                 <td className="team-name-cell">{row.name}</td>
-                {!profile && <td className="status-cell">bleh</td>}
-                {profile && (
+                {!profile && <td className="status-cell">{row.members}</td>}
+                {profile && typeof row.avg === 'number' && (
                   <td className="score-cell">
                     <strong>{row.avg.toFixed(1)}</strong>
                     <span className="score-max"> / 100</span>
