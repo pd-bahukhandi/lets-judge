@@ -126,7 +126,7 @@ export default function LeaderboardPage() {
             <tr>
               <th>#</th>
               <th>Team</th>
-              {!profile && <th>Members {rows.length}</th>}
+              {!profile && <th>Members</th>}
               {profile && <th>Avg Score</th>}
               {profile && <th>Judges</th>}              
             </tr>
@@ -142,7 +142,7 @@ export default function LeaderboardPage() {
                 </td>
                 <td className="team-name-cell">{row.name}</td>
                 {!profile && <td className="status-cell">{row.members}</td>}                
-                {profile && <td>blah</td>} 
+                {profile && <td>{row.avg}</td>} 
                 {profile && <td>{row.judgeCount}</td>}                
               </tr>
             ))}
