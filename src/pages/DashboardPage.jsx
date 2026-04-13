@@ -48,7 +48,6 @@ export default function DashboardPage() {
         <h2>{profile.username}'s Dashboard</h2>
         <div className="header-right">
           <span className="username-badge">👤 {profile.username}</span>
-          <Link to="/leaderboard" className="nav-link">Leaderboard</Link>
           <button onClick={logout} className="btn-logout">Log Out</button>
         </div>
       </header>
