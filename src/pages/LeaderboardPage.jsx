@@ -86,7 +86,7 @@ export default function LeaderboardPage() {
   return (
     <div className="page">
       <header className="app-header">
-        <h2>🏆 Leaderboard</h2>
+        <h2>{profile ? '🏆 Leaderboard' : "🚀 Let's Hack"}</h2>
         <div className="header-right">
           {profile ? (
             <>
@@ -133,7 +133,7 @@ export default function LeaderboardPage() {
                   {profile ? (MEDALS[i] ?? i + 1) : (i + 1)}
                 </td>
                 <td className="team-name-cell">{row.name}</td>
-                {!profile && <td className="status-cell">Participating</td>}
+                {!profile && <td className="status-cell">{row.members}</td>}
                 {profile && (
                   <td className="score-cell">
                     <strong>{row.avg.toFixed(1)}</strong>
