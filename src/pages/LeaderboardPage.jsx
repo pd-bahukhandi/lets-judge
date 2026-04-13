@@ -14,7 +14,7 @@ export default function LeaderboardPage() {
   const load = useCallback(async () => {
     // Fetch teams and scores separately to ensure team names are available
     const [{ data: teamsData }, { data: scoresData }] = await Promise.all([
-      supabase.from('teams').select('id, name'),
+      supabase.from('teams').select('id, name, members'),
       supabase.from('scores').select('team_id, total'),
     ])
 
@@ -31,6 +31,7 @@ export default function LeaderboardPage() {
       const allTeams = teamsData.map(team => ({
         name: team.name,
         id: team.id,
+        members: team.members,
       }))
       setRows(allTeams)
     } else {
