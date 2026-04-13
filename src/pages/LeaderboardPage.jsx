@@ -133,8 +133,8 @@ export default function LeaderboardPage() {
               <th>#</th>
               <th>Team</th>
               {!profile && <th>Members</th>}
-              {profile && <th>Avg Score</th>}
-              {profile && <th>Judges</th>}              
+              {profile && profile.role === 'admin' && <th>Avg Score</th>}
+              {profile && profile.role === 'admin' && <th>Judges</th>}              
             </tr>
           </thead>
           <tbody>
@@ -148,8 +148,8 @@ export default function LeaderboardPage() {
                 </td>
                 <td className="team-name-cell">{row.name}</td>
                 {!profile && <td className="status-cell">{row.members}</td>}                
-                {profile && <td>{row.avg}</td>} 
-                {profile && <td>{row.judgeCount}</td>}                
+                {profile && profile.role === 'admin' && <td>{row.avg}</td>} 
+                {profile && profile.role === 'admin' && <td>{row.judgeCount}</td>}                
               </tr>
             ))}
           </tbody>

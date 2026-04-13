@@ -16,7 +16,7 @@ export default function App() {
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute  requiredRole="judge">
+              <ProtectedRoute>
                 <DashboardPage />
               </ProtectedRoute>
             }
