@@ -9,14 +9,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
-
+  
   async function handleSubmit(e) {
     e.preventDefault()
     setError(null)
     setLoading(true)
     try {
       await login(username.trim(), password)      
-      navigate(profile?.role === 'judge' ? '/dashboard' : '/leaderboard');
+      navigate('/leaderboard');
     } catch (err) {
       setError(err.message || 'Login failed. Check your credentials.')
     } finally {
