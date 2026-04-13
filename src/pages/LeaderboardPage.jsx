@@ -137,7 +137,7 @@ export default function LeaderboardPage() {
                 </td>
                 <td className="team-name-cell">{row.name}</td>
                 {!profile && <td className="status-cell">{row.members}</td>}
-                {profile && typeof row.avg === 'number' && (
+                {profile && typeof row.avg !== null && (
                   <td className="score-cell">
                     <strong>{row.avg.toFixed(1)}</strong>
                     <span className="score-max"> / 100</span>
