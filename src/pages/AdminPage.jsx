@@ -81,7 +81,7 @@ export default function AdminPage() {
                   <td className="total-col"><strong>{s.total}</strong></td>
                 </tr>
               ))}
-              <hr>
+              <hr></hr>
               {unscoredTeams.length > 0 && (
                   <div className="unscored-teams">
                   <h3>Teams without scores</h3>
