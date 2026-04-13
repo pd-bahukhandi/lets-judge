@@ -35,31 +35,34 @@ export default function LeaderboardPage() {
       }))
       setRows(allTeams)
     } else {
-      // Authenticated: show only teams with scores, with full details
-      //if (!scoresData) return
+      // Ensure scoresData is always usable
+        const safeScores = scoresData ?? []
 
-      // Aggregate scores by team
-      const map = {}
-      for (const s of scoresData) {
-        const id = s.team_id
-        if (!map[id]) {
-          map[id] = { name: teamNames[id] ?? 'Unknown', totals: [] }
+        // Aggregate scores by team
+        const map = {}
+
+        for (const s of safeScores) {
+          const id = s.team_id
+          if (!map[id]) {
+            map[id] = { name: teamNames[id] ?? 'Unknown', totals: [] }
+          }
+          map[id].totals.push(s.total)
         }
-        map[id].totals.push(s.total)
-      }
 
-      const ranked = Object.values(map)
-        .map(t => ({
-          name: t.name,
-          avg:
-            t.totals.length > 0
-              ? t.totals.reduce((a, b) => a + b, 0) / t.totals.length
-              : 0,
-          judgeCount: t.totals.length,
-        }))
-        .sort((a, b) => b.avg - a.avg)
+        // Build ranked list (avg = 0 when no scores)
+        const ranked = Object.values(map)
+          .map(t => ({
+            name: t.name,
+            avg:
+              t.totals.length > 0
+                ? t.totals.reduce((a, b) => a + b, 0) / t.totals.length
+                : 0,
+            judgeCount: t.totals.length,
+          }))
+          .sort((a, b) => b.avg - a.avg)
 
-      setRows(allTeams)
+        setRows(ranked)
+
     }
 
     setLastUpdated(new Date())
