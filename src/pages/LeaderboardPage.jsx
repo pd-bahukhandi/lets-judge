@@ -141,7 +141,7 @@ export default function LeaderboardPage() {
                 <td className="team-name-cell">{row.name}</td>
                 {!profile && <td className="status-cell">{row.members}</td>}                
                 <td className="score-cell">
-                  {profile ? (
+                  {/* {profile ? (
                     typeof row.avg === 'number' ? (
                       <>
                         <strong>{row.avg.toFixed(1)}</strong>
@@ -150,7 +150,14 @@ export default function LeaderboardPage() {
                     ) : (
                       '–'
                     )
-                  ) : null}
+                  ) : null} */}
+                   {profile ? (
+                      <>
+                        <strong>hello</strong>
+                        <span className="score-max"> / 100</span>
+                      </>
+                    ) 
+                   : null}
                 </td>
                 {profile && <td>{row.judgeCount}</td>}                
               </tr>
