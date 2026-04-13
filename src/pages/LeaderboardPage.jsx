@@ -51,7 +51,7 @@ export default function LeaderboardPage() {
       const ranked = Object.values(map)
         .map(t => ({
           name: t.name,
-          avg: t.totals.reduce((a, b) => a + b, 0) / t.totals.length,
+          avg: t.totals.reduce((a, b) => a + b, 0) / t.totals.length : null,
           judgeCount: t.totals.length,
         }))
         .sort((a, b) => b.avg - a.avg)
@@ -137,12 +137,12 @@ export default function LeaderboardPage() {
                 </td>
                 <td className="team-name-cell">{row.name}</td>
                 {!profile && <td className="status-cell">{row.members}</td>}
-                {profile && typeof row.avg === 'number' && (
-                  <td className="score-cell">
+                <td className="score-cell">
+                {profile && typeof row.avg === 'number' ? (
                     <strong>{row.avg.toFixed(1)}</strong>
-                    <span className="score-max"> / 100</span>
-                  </td>
-                )}
+                    <span className="score-max"> / 100</span></>                  
+                ):('-')}
+                </td>
                 {profile && <td>{row.judgeCount}</td>}                
               </tr>
             ))}
