@@ -91,8 +91,18 @@ export default function AdminPage() {
               })}
             </tfoot>
           </table>
-        </div>
+        </div>        
       )}
+      {unscoredTeams.length > 0 && (
+          <div className="unscored-teams">
+            <h3>Teams without scores</h3>
+            <ul>
+              {unscoredTeams.map(t => (
+                <li key={t.id}>{t.name}</li>
+              ))}
+            </ul>
+          </div>
+        )}
     </div>
   )
 }
