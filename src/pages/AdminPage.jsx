@@ -40,8 +40,7 @@ export default function AdminPage() {
     <div className="page">
       <header className="app-header">
         <h2>Admin – All Scores</h2>
-        <div className="header-right">
-          <Link to="/dashboard" className="nav-link">Dashboard</Link>
+        <div className="header-right">          
           <Link to="/leaderboard" className="nav-link">Leaderboard</Link>
           <button onClick={logout} className="btn-logout">Log Out</button>
         </div>
@@ -85,7 +84,7 @@ export default function AdminPage() {
                     <td colSpan={2}><strong>{name}</strong> avg</td>
                     {CATS.map(c => <td key={c.key} />)}
                     <td><strong>{avg}</strong>
-                    <span className="judge-count">({judgeCount})</span>
+                    <span className="judge-count"> ({judgeCount})</span>
                     </td>
                   </tr>
                 )
