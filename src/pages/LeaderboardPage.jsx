@@ -62,7 +62,6 @@ export default function LeaderboardPage() {
           .sort((a, b) => b.avg - a.avg)
 
         setRows(ranked)
-
     }
 
     setLastUpdated(new Date())
@@ -127,7 +126,7 @@ export default function LeaderboardPage() {
             <tr>
               <th>#</th>
               <th>Team</th>
-              {!profile && <th>Members</th>}
+              {!profile && <th>Members {rows.length}</th>}
               {profile && <th>Avg Score</th>}
               {profile && <th>Judges</th>}              
             </tr>
