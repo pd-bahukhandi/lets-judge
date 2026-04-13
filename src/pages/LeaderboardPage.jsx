@@ -36,7 +36,7 @@ export default function LeaderboardPage() {
       setRows(allTeams)
     } else {
       // Authenticated: show only teams with scores, with full details
-      if (!scoresData) return
+      //if (!scoresData) return
 
       // Aggregate scores by team
       const map = {}
@@ -123,8 +123,7 @@ export default function LeaderboardPage() {
               <th>Team</th>
               {!profile && <th>Members</th>}
               {profile && <th>Avg Score</th>}
-              {profile && <th>Judges</th>}
-              {profile && <th>something</th>}
+              {profile && <th>Judges</th>}              
             </tr>
           </thead>
           <tbody>
@@ -144,8 +143,7 @@ export default function LeaderboardPage() {
                     <span className="score-max"> / 100</span>
                   </td>
                 )}
-                {profile && <td>{row.judgeCount}</td>}
-                {profile && <td>{row.avg}</td>}
+                {profile && <td>{row.judgeCount}</td>}                
               </tr>
             ))}
           </tbody>
