@@ -16,6 +16,7 @@ export default function LoginPage() {
     setLoading(true)
     try {
       await login(username.trim(), password)      
+      navigate('/leaderboard')
     } catch (err) {
       setError(err.message || 'Login failed. Check your credentials.')
     } finally {
