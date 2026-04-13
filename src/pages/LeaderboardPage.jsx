@@ -54,7 +54,7 @@ export default function LeaderboardPage() {
           avg:
             t.totals.length > 0
               ? t.totals.reduce((a, b) => a + b, 0) / t.totals.length
-              : null,
+              : 0,
           judgeCount: t.totals.length,
         }))
         .sort((a, b) => b.avg - a.avg)
