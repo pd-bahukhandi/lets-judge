@@ -79,11 +79,14 @@ export default function AdminPage() {
             <tfoot>
               {Object.entries(teamAverages).map(([name, totals]) => {
                 const avg = (totals.reduce((a, b) => a + b, 0) / totals.length).toFixed(1)
+                const judgeCount = totals.length
                 return (
                   <tr key={name} className="avg-row">
                     <td colSpan={2}><strong>{name}</strong> avg</td>
                     {CATS.map(c => <td key={c.key} />)}
-                    <td><strong>{avg}</strong></td>
+                    <td><strong>{avg}</strong>
+                    <span className="judge-count">({judgeCount})</span>
+                    </td>
                   </tr>
                 )
               })}

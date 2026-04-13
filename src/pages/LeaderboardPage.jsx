@@ -90,7 +90,9 @@ export default function LeaderboardPage() {
         <div className="header-right">
           {profile ? (
             <>
-              <Link to="/dashboard" className="nav-link">Dashboard</Link>
+              {profile.role === 'judge' && (
+                <Link to="/dashboard" className="nav-link">Dashboard</Link>
+              )}
               {profile.role === 'admin' && (
                 <Link to="/admin" className="nav-link">Admin</Link>
               )}
@@ -118,7 +120,7 @@ export default function LeaderboardPage() {
             <tr>
               <th>#</th>
               <th>Team</th>
-              {!profile && <th>Status</th>}
+              {!profile && <th>Members</th>}
               {profile && <th>Avg Score</th>}
               {profile && <th>Judges</th>}
             </tr>

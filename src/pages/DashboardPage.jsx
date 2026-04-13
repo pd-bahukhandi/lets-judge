@@ -45,13 +45,10 @@ export default function DashboardPage() {
   return (
     <div className="page">
       <header className="app-header">
-        <h2>Judge Dashboard</h2>
+        <h2>{profile.username}'s Dashboard</h2>
         <div className="header-right">
           <span className="username-badge">👤 {profile.username}</span>
           <Link to="/leaderboard" className="nav-link">Leaderboard</Link>
-          {profile.role === 'admin' && (
-            <Link to="/admin" className="nav-link">Admin</Link>
-          )}
           <button onClick={logout} className="btn-logout">Log Out</button>
         </div>
       </header>
