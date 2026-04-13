@@ -51,7 +51,10 @@ export default function LeaderboardPage() {
       const ranked = Object.values(map)
         .map(t => ({
           name: t.name,
-          avg: t.totals.reduce((a, b) => a + b, 0) / t.totals.length : null,
+          avg:
+            t.totals.length > 0
+              ? t.totals.reduce((a, b) => a + b, 0) / t.totals.length
+              : null,
           judgeCount: t.totals.length,
         }))
         .sort((a, b) => b.avg - a.avg)
