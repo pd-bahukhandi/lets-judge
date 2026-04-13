@@ -81,6 +81,16 @@ export default function AdminPage() {
                   <td className="total-col"><strong>{s.total}</strong></td>
                 </tr>
               ))}
+              {unscoredTeams.length > 0 && (
+                  <div className="unscored-teams">
+                  <h3>Teams without scores</h3>
+                  <ul>
+                    {unscoredTeams.map(t => (
+                    <li key={t.id}>{t.name}</li>
+                    ))} 
+                  </ul>
+                  </div>
+            )}
             </tbody>
             <tfoot>
               {Object.entries(teamAverages).map(([name, totals]) => {
@@ -100,16 +110,6 @@ export default function AdminPage() {
           </table>
         </div>        
       )}
-      {unscoredTeams.length > 0 && (
-         <div className="unscored-teams">
-          <h3>Teams without scores</h3>
-          <ul>
-            {unscoredTeams.map(t => (
-            <li key={t.id}>{t.name}</li>
-            ))} 
-          </ul>
-          </div>
-          )}
     </div>
   )
 }
