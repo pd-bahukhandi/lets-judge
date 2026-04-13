@@ -124,6 +124,7 @@ export default function LeaderboardPage() {
               {!profile && <th>Members</th>}
               {profile && <th>Avg Score</th>}
               {profile && <th>Judges</th>}
+              {profile && <th>something</th>}
             </tr>
           </thead>
           <tbody>
