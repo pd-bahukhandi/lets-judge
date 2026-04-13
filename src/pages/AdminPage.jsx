@@ -15,14 +15,21 @@ export default function AdminPage() {
   const { logout } = useAuth()
   const [scores, setScores] = useState([])
   const [loading, setLoading] = useState(true)
+  const [unscoredTeams, setUnscoredTeams] = useState([])
 
   useEffect(() => {
     async function load() {
-      const { data } = await supabase
-        .from('scores')
-        .select('*, teams(name), profiles(username)')
-        .order('teams(name)')
-      setScores(data || [])
+      const [{ data: scoresData }, { data: teamsData }] = await Promise.all([
+        supabase.from('scores').select('*, teams(name), profiles(username)').order('teams(name)'),
+        supabase.from('teams').select('id, name'),
+      ])
+
+      setScores(scoresData || [])
+
+      const scoredIds = new Set((scoresData || []).map(s => s.team_id))
+      const unscored = (teamsData || []).filter(t => !scoredIds.has(t.id))
+      setUnscoredTeams(unscored || [])
+
       setLoading(false)
     }
     load()
@@ -94,15 +101,15 @@ export default function AdminPage() {
         </div>        
       )}
       {unscoredTeams.length > 0 && (
-          <div className="unscored-teams">
-            <h3>Teams without scores</h3>
-            <ul>
-              {unscoredTeams.map(t => (
-                <li key={t.id}>{t.name}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+         <div className="unscored-teams">
+          <h3>Teams without scores</h3>
+          <ul>
+            {unscoredTeams.map(t => (
+            <li key={t.id}>{t.name}</li>
+            ))} 
+          </ul>
+          </div>
+          )}
     </div>
   )
 }
