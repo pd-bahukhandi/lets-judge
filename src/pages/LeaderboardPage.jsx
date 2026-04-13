@@ -104,7 +104,10 @@ export default function LeaderboardPage() {
         <h2>{profile ? '🏆 Leaderboard' : "🚀 Let's Hack"}</h2>
         <div className="header-right">
           {profile ? (
-            <>
+            <>            
+              {profile.role === 'judge' && (
+                <Link to="/dashboard" className="nav-link">Dashboard</Link>
+              )}
               {profile.role === 'admin' && (
                 <Link to="/admin" className="nav-link">Admin</Link>
               )}
