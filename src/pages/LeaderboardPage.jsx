@@ -133,7 +133,7 @@ export default function LeaderboardPage() {
                   {profile ? (MEDALS[i] ?? i + 1) : (i + 1)}
                 </td>
                 <td className="team-name-cell">{row.name}</td>
-                {!profile && <td className="status-cell">{row.members}</td>}
+                {!profile && <td className="status-cell">bleh</td>}
                 {profile && (
                   <td className="score-cell">
                     <strong>{row.avg.toFixed(1)}</strong>
