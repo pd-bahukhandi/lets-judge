@@ -18,6 +18,15 @@ export default function LeaderboardPage() {
       supabase.from('scores').select('team_id, total'),
     ])
 
+    const scoredTeamIds = new Set(
+      (scoresData ?? []).map(s => s.team_id)
+    )
+
+    const unscoredTeams = (teamsData ?? []).filter(
+      team => !scoredTeamIds.has(team.id)
+    )
+
+
     if (!teamsData) return
 
     // Build team name lookup
