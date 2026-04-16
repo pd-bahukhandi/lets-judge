@@ -12,9 +12,9 @@ export default function LeaderboardPage() {
   const [lastUpdated, setLastUpdated] = useState(null)
 
   const load = useCallback(async () => {
-    // Fetch teams and scores separately to ensure team names are available
+    // Fetch teams (including members + usecase) and scores separately
     const [{ data: teamsData }, { data: scoresData }] = await Promise.all([
-      supabase.from('teams').select('id, name, members'),
+      supabase.from('teams').select('id, name, members, usecase'),
       supabase.from('scores').select('team_id, total'),
     ])
 
@@ -29,18 +29,24 @@ export default function LeaderboardPage() {
 
     if (!teamsData) return
 
-    // Build team name lookup
-    const teamNames = {}
+    // Build team lookup (name, members, usecase)
+    const teamLookup = {}
     for (const team of teamsData) {
-      teamNames[team.id] = team.name
+      teamLookup[team.id] = {
+        id: team.id,
+        name: team.name,
+        members: team.members,
+        usecase: team.usecase,
+      }
     }
 
     if (!profile) {
       // Unauthenticated: show all teams, no scores
       const allTeams = teamsData.map(team => ({
-        name: team.name,
         id: team.id,
+        name: team.name,
         members: team.members,
+        usecase: team.usecase,
       }))
       setRows(allTeams)
     } else {
@@ -53,7 +59,8 @@ export default function LeaderboardPage() {
         for (const s of safeScores) {
           const id = s.team_id
           if (!map[id]) {
-            map[id] = { name: teamNames[id] ?? 'Unknown', totals: [] }
+            const team = teamLookup[id] ?? { name: 'Unknown', members: '', usecase: '' }
+            map[id] = { id, name: team.name, members: team.members, usecase: team.usecase, totals: [] }
           }
           map[id].totals.push(s.total)
         }
@@ -61,7 +68,10 @@ export default function LeaderboardPage() {
         // Build ranked list (avg = 0 when no scores)
         const ranked = Object.values(map)
           .map(t => ({
+            id: t.id,
             name: t.name,
+            members: t.members,
+            usecase: t.usecase,
             avg:
               t.totals.length > 0
                 ? t.totals.reduce((a, b) => a + b, 0) / t.totals.length
@@ -135,7 +145,8 @@ export default function LeaderboardPage() {
             <tr>
               <th>#</th>
               <th>Team</th>
-              {!profile && <th>Members</th>}
+              <th>Members</th>
+              <th>Usecase</th>
               {profile && profile.role === 'admin' && <th>Avg Score</th>}
               {profile && profile.role === 'admin' && <th>Judges</th>}              
             </tr>
@@ -150,7 +161,8 @@ export default function LeaderboardPage() {
                   {profile ? (MEDALS[i] ?? i + 1) : (i + 1)}
                 </td>
                 <td className="team-name-cell">{row.name}</td>
-                {!profile && <td className="status-cell">{row.members}</td>}                
+                <td className="status-cell">{row.members}</td>
+                <td className="usecase-cell">{row.usecase}</td>
                 {profile && profile.role === 'admin' && <td>{row.avg}</td>} 
                 {profile && profile.role === 'admin' && <td>{row.judgeCount}</td>}                
               </tr>
