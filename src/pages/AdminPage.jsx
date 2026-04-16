@@ -58,14 +58,14 @@ export default function AdminPage() {
       ) : (
         <div>
           {/* Team Averages on top */}
-          <div className="averages-section">
+          <div className="averages-section" style={{ marginBottom: '3rem' }}>
             <h3>Team Averages</h3>
-            <table className="averages-table">
+            <table className="averages-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr>
-                  <th>Team</th>
-                  <th>Average Score</th>
-                  <th>Judge Count</th>
+                <tr style={{ borderBottom: '2px solid #333' }}>
+                  <th style={{ padding: '1rem', textAlign: 'left', fontWeight: 'bold' }}>Team</th>
+                  <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 'bold' }}>Average Score</th>
+                  <th style={{ padding: '1rem', textAlign: 'center', fontWeight: 'bold' }}>Judge Count</th>
                 </tr>
               </thead>
               <tbody>
@@ -73,10 +73,10 @@ export default function AdminPage() {
                   const avg = (totals.reduce((a, b) => a + b, 0) / totals.length).toFixed(1)
                   const judgeCount = totals.length
                   return (
-                    <tr key={name}>
-                      <td><strong>{name}</strong></td>
-                      <td><strong>{avg}</strong></td>
-                      <td>{judgeCount}</td>
+                    <tr key={name} style={{ borderBottom: '1px solid #ddd' }}>
+                      <td style={{ padding: '1rem', textAlign: 'left' }}><strong>{name}</strong></td>
+                      <td style={{ padding: '1rem', textAlign: 'center', fontSize: '1.1rem' }}><strong>{avg}</strong></td>
+                      <td style={{ padding: '1rem', textAlign: 'center' }}>{judgeCount}</td>
                     </tr>
                   )
                 })}
@@ -86,7 +86,7 @@ export default function AdminPage() {
 
           {/* Unscored Teams in the middle */}
           {unscoredTeams.length > 0 && (
-            <div className="unscored-section">
+            <div className="unscored-section" style={{ marginBottom: '3rem' }}>
               <h3>Teams without scores</h3>
               <ul>
                 {unscoredTeams.map(t => (
@@ -97,7 +97,7 @@ export default function AdminPage() {
           )}
 
           {/* Detailed scores at the bottom */}
-          <div className="table-scroll">
+          <div className="table-scroll" style={{ marginTop: '2rem' }}>
             <h3>All Scores</h3>
             <table className="admin-table">
               <thead>

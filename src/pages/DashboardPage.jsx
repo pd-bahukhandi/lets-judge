@@ -80,8 +80,8 @@ export default function DashboardPage() {
               </button>
               {isOpen && (
                 <>
-                  <div className="team-details">
-                    <div className="detail-section">
+                  <div className="team-details" style={{ marginBottom: '2rem' }}>
+                    <div className="detail-section" style={{ marginBottom: '1rem' }}>
                       <h4>Members</h4>
                       <p>{team.members || 'N/A'}</p>
                     </div>
