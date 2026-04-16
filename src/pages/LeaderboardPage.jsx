@@ -40,8 +40,9 @@ export default function LeaderboardPage() {
       }
     }
 
-    if (!profile) {
-      // Unauthenticated: show all teams, no scores
+    // Only admins see ranked list with scores; judges and unauthenticated users see all teams
+    if (!profile || profile.role !== 'admin') {
+      // Unauthenticated user or judge: show all teams, no scores
       const allTeams = teamsData.map(team => ({
         id: team.id,
         name: team.name,
@@ -50,37 +51,37 @@ export default function LeaderboardPage() {
       }))
       setRows(allTeams)
     } else {
-      // Ensure scoresData is always usable
-        const safeScores = scoresData ?? []
+      // Admin: show ranked list with scores
+      const safeScores = scoresData ?? []
 
-        // Aggregate scores by team
-        const map = {}
+      // Aggregate scores by team
+      const map = {}
 
-        for (const s of safeScores) {
-          const id = s.team_id
-          if (!map[id]) {
-            const team = teamLookup[id] ?? { name: 'Unknown', members: '', usecase: '' }
-            map[id] = { id, name: team.name, members: team.members, usecase: team.usecase, totals: [] }
-          }
-          map[id].totals.push(s.total)
+      for (const s of safeScores) {
+        const id = s.team_id
+        if (!map[id]) {
+          const team = teamLookup[id] ?? { name: 'Unknown', members: '', usecase: '' }
+          map[id] = { id, name: team.name, members: team.members, usecase: team.usecase, totals: [] }
         }
+        map[id].totals.push(s.total)
+      }
 
-        // Build ranked list (avg = 0 when no scores)
-        const ranked = Object.values(map)
-          .map(t => ({
-            id: t.id,
-            name: t.name,
-            members: t.members,
-            usecase: t.usecase,
-            avg:
-              t.totals.length > 0
-                ? t.totals.reduce((a, b) => a + b, 0) / t.totals.length
-                : 0,
-            judgeCount: t.totals.length,
-          }))
-          .sort((a, b) => b.avg - a.avg)
+      // Build ranked list (avg = 0 when no scores)
+      const ranked = Object.values(map)
+        .map(t => ({
+          id: t.id,
+          name: t.name,
+          members: t.members,
+          usecase: t.usecase,
+          avg:
+            t.totals.length > 0
+              ? t.totals.reduce((a, b) => a + b, 0) / t.totals.length
+              : 0,
+          judgeCount: t.totals.length,
+        }))
+        .sort((a, b) => b.avg - a.avg)
 
-        setRows(ranked)
+      setRows(ranked)
     }
 
     setLastUpdated(new Date())
@@ -91,8 +92,8 @@ export default function LeaderboardPage() {
     load()
 
     let channel = null
-    if (profile) {
-      // Only set up real-time updates for authenticated users
+    if (profile && profile.role === 'admin') {
+      // Only set up real-time updates for admin users who see ranked scores
       channel = supabase
         .channel('leaderboard-scores')
         .on(
@@ -111,7 +112,7 @@ export default function LeaderboardPage() {
   return (
     <div className="page">
       <header className="app-header">
-        <h2>{profile ? '🏆 Leaderboard' : "🚀 Let's Hack"}</h2>
+        <h2>{profile?.role === 'admin' ? '🏆 Leaderboard' : "🚀 Let's Hack"}</h2>
         <div className="header-right">
           {profile ? (
             <>            
@@ -129,7 +130,7 @@ export default function LeaderboardPage() {
         </div>
       </header>
 
-      {profile && lastUpdated && (
+      {profile?.role === 'admin' && lastUpdated && (
         <p className="live-badge">
           ● Live · updated {lastUpdated.toLocaleTimeString()}
         </p>
@@ -138,7 +139,7 @@ export default function LeaderboardPage() {
       {loading ? (
         <div className="loading">Loading…</div>
       ) : rows.length === 0 ? (
-        <p className="empty-state">{profile ? 'No scores submitted yet. Check back soon!' : 'No teams available.'}</p>
+        <p className="empty-state">{profile?.role === 'admin' ? 'No scores submitted yet. Check back soon!' : 'No teams available.'}</p>
       ) : (
         <table className="leaderboard-table">
           <thead>
@@ -155,16 +156,16 @@ export default function LeaderboardPage() {
             {rows.map((row, i) => (
               <tr
                 key={row.id ?? row.name}
-                className={profile && i < 3 ? `rank-${i + 1}` : ''}
+                className={profile?.role === 'admin' && i < 3 ? `rank-${i + 1}` : ''}
               >
                 <td className="rank-cell">
-                  {profile ? (MEDALS[i] ?? i + 1) : (i + 1)}
+                  {profile?.role === 'admin' ? (MEDALS[i] ?? i + 1) : (i + 1)}
                 </td>
                 <td className="team-name-cell">{row.name}</td>
                 <td className="status-cell">{row.members}</td>
                 <td className="usecase-cell">{row.usecase}</td>
-                {profile && profile.role === 'admin' && <td>{row.avg}</td>} 
-                {profile && profile.role === 'admin' && <td>{row.judgeCount}</td>}                
+                {profile?.role === 'admin' && <td>{row.avg}</td>} 
+                {profile?.role === 'admin' && <td>{row.judgeCount}</td>}                
               </tr>
             ))}
           </tbody>
