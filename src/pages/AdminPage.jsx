@@ -56,61 +56,77 @@ export default function AdminPage() {
       {loading ? (
         <div className="loading">Loading…</div>
       ) : (
-        <div className="table-scroll">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Team</th>
-                <th>Judge</th>
-                {CATS.map(c => (
-                  <th key={c.key} title={c.key}>
-                    {c.label}<span className="max-label">/{c.max}</span>
-                  </th>
-                ))}
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {scores.map(s => (
-                <tr key={s.id}>
-                  <td className="team-col">{s.teams?.name}</td>
-                  <td className="judge-col">{s.profiles?.username}</td>
-                  {CATS.map(c => (
-                    <td key={c.key} className="score-col">{s[c.key]}</td>
-                  ))}
-                  <td className="total-col"><strong>{s.total}</strong></td>
+        <div>
+          {/* Team Averages on top */}
+          <div className="averages-section">
+            <h3>Team Averages</h3>
+            <table className="averages-table">
+              <thead>
+                <tr>
+                  <th>Team</th>
+                  <th>Average Score</th>
+                  <th>Judge Count</th>
                 </tr>
-              ))}
-              <hr></hr>
-              {unscoredTeams.length > 0 && (
-                  <div className="unscored-teams">
-                  <h3>Teams without scores</h3>
-                  <ul>
-                    {unscoredTeams.map(t => (
-                    <li key={t.id}>{t.name}</li>
-                    ))} 
-                  </ul>
-                  </div>
-            )}
-            <hr></hr>
-            </tbody>
-            <tfoot>
-              {Object.entries(teamAverages).map(([name, totals]) => {
-                const avg = (totals.reduce((a, b) => a + b, 0) / totals.length).toFixed(1)
-                const judgeCount = totals.length
-                return (
-                  <tr key={name} className="avg-row">
-                    <td colSpan={2}><strong>{name}</strong> avg</td>
-                    {CATS.map(c => <td key={c.key} />)}
-                    <td><strong>{avg}</strong>
-                    <span className="judge-count"> ({judgeCount})</span>
-                    </td>
+              </thead>
+              <tbody>
+                {Object.entries(teamAverages).map(([name, totals]) => {
+                  const avg = (totals.reduce((a, b) => a + b, 0) / totals.length).toFixed(1)
+                  const judgeCount = totals.length
+                  return (
+                    <tr key={name}>
+                      <td><strong>{name}</strong></td>
+                      <td><strong>{avg}</strong></td>
+                      <td>{judgeCount}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Unscored Teams in the middle */}
+          {unscoredTeams.length > 0 && (
+            <div className="unscored-section">
+              <h3>Teams without scores</h3>
+              <ul>
+                {unscoredTeams.map(t => (
+                  <li key={t.id}>{t.name}</li>
+                ))} 
+              </ul>
+            </div>
+          )}
+
+          {/* Detailed scores at the bottom */}
+          <div className="table-scroll">
+            <h3>All Scores</h3>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Team</th>
+                  <th>Judge</th>
+                  {CATS.map(c => (
+                    <th key={c.key} title={c.key}>
+                      {c.label}<span className="max-label">/{c.max}</span>
+                    </th>
+                  ))}
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {scores.map(s => (
+                  <tr key={s.id}>
+                    <td className="team-col">{s.teams?.name}</td>
+                    <td className="judge-col">{s.profiles?.username}</td>
+                    {CATS.map(c => (
+                      <td key={c.key} className="score-col">{s[c.key]}</td>
+                    ))}
+                    <td className="total-col"><strong>{s.total}</strong></td>
                   </tr>
-                )
-              })}
-            </tfoot>
-          </table>
-        </div>        
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
     </div>
   )
