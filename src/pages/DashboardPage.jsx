@@ -15,7 +15,7 @@ export default function DashboardPage() {
     if (!profile) return // Wait for profile to load
     async function load() {
       const [{ data: teamsData }, { data: scoresData }] = await Promise.all([
-        supabase.from('teams').select('*').order('name'),
+        supabase.from('teams').select('id, name, members, usecase').order('name'),
         supabase.from('scores').select('*').eq('judge_id', profile.id),
       ])
       setTeams(teamsData || [])
@@ -79,13 +79,25 @@ export default function DashboardPage() {
                 <span className="expand-icon">{isOpen ? '▲' : '▼'}</span>
               </button>
               {isOpen && (
-                <ScoreForm
-                  team={team}
-                  existingScore={scores[team.id]}
-                  onSaved={() => {
-                    refreshScores()
-                  }}
-                />
+                <>
+                  <div className="team-details">
+                    <div className="detail-section">
+                      <h4>Members</h4>
+                      <p>{team.members || 'N/A'}</p>
+                    </div>
+                    <div className="detail-section">
+                      <h4>Usecase</h4>
+                      <p>{team.usecase || 'N/A'}</p>
+                    </div>
+                  </div>
+                  <ScoreForm
+                    team={team}
+                    existingScore={scores[team.id]}
+                    onSaved={() => {
+                      refreshScores()
+                    }}
+                  />
+                </>
               )}
             </div>
           )
